@@ -580,7 +580,7 @@ def finetune_titles(sess,
                 index += 1
         # Custom code
         print(num_of_unique, "unique samples out of", total_num)
-        print(num_of_unique/float(total_num), '% are unique!")
+        print(num_of_unique/float(total_num), '% are unique!')
         # Custom code
         print(text)
         maketree(os.path.join(SAMPLE_DIR, run_name))
