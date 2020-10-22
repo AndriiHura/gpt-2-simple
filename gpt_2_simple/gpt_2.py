@@ -396,7 +396,7 @@ def finetune_titles(sess,
              only_train_transformer_layers=False,
              optimizer='adam',
              overwrite=False,
-             titles_file=''
+             titles_file='',
              compare_uniqueness=False):
     """Finetunes the model on the given dataset.
     Adapted from https://github.com/nshepperd/gpt-2/blob/finetuning/train.py.
