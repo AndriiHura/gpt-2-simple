@@ -562,10 +562,9 @@ def finetune_titles(sess,
                 gen_titles = text.split("<|startoftext|>")
                 gen_titles = list(map(lambda x: x.strip().lower().replace("<|endoftext|>", ""), gen_titles))
                 gen_titles = list(filter(lambda x: len(x)>10, gen_titles))
+                total_num += len(gen_titles)
                 for tt in gen_titles:
-                    if tt in titles:
-                        print('NOT ORIG:', tt)
-                    else:
+                    if tt not in titles:
                         num_of_unique += 1
                 
 #                 if (compare_uniqueness):
@@ -581,6 +580,7 @@ def finetune_titles(sess,
                 index += 1
         # Custom code
         print(num_of_unique, "unique samples out of", total_num)
+        print(num_of_unique/float(total_num), '% are unique!")
         # Custom code
         print(text)
         maketree(os.path.join(SAMPLE_DIR, run_name))
