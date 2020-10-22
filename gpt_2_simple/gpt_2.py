@@ -412,6 +412,7 @@ def finetune_titles(sess,
         path_to_tiles = "/content/" + titles_file
         df_titles = pd.read_csv(path_to_tiles, names=['Title'])
         titles = df_titles.values.squeeze()
+        titles = list(map(lambda x: x.strip().lower(), titles))
         # Custom part
 
     SAMPLE_DIR = 'samples'
@@ -549,6 +550,7 @@ def finetune_titles(sess,
         index = 0
         # Custom code
         num_of_unique = 0
+        total_num = 0
         # Custom code
         while index < sample_num:
             out = sess.run(
@@ -557,19 +559,28 @@ def finetune_titles(sess,
             for i in range(min(sample_num - index, batch_size)):
                 text = enc.decode(out[i])
                 # Custom code
-                if (compare_uniqueness):
-                    sample_text = text.lower().strip().replace("<|startoftext|>", "").replace("<|endoftext|>")
-                    if sample_text in titles:
-                        pass
+                gen_titles = text.split("<|startoftext|>")
+                gen_titles = list(map(lambda x: x.strip().lower().replace("<|endoftext|>", ""), gen_titles))
+                gen_titles = list(filter(lambda x: len(x)>10, gen_titles))
+                for tt in gen_titles:
+                    if tt in titles:
+                        print('NOT ORIG:', tt)
                     else:
                         num_of_unique += 1
+                
+#                 if (compare_uniqueness):
+#                     sample_text = text.lower().strip().replace("<|startoftext|>", "").replace("<|endoftext|>", "")
+#                     if sample_text in titles:
+#                         pass
+#                     else:
+#                         num_of_unique += 1
                 # Custom code
                 text = '======== SAMPLE {} ========\n{}\n'.format(
                     index + 1, text)
                 all_text.append(text)
                 index += 1
         # Custom code
-        print(num_of_unique, "unique samples out of", index)
+        print(num_of_unique, "unique samples out of", total_num)
         # Custom code
         print(text)
         maketree(os.path.join(SAMPLE_DIR, run_name))
