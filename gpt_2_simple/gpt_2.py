@@ -401,6 +401,14 @@ def finetune_articles(sess,
     Adapted from https://github.com/nshepperd/gpt-2/blob/finetuning/train.py.
     See that file for parameter definitions.
     """
+    if custom_start_context:
+        path_to_tiles = "/content/" + titles_file
+        df_titles = pd.read_csv(path_to_tiles, names=['Title'])
+        titles = df_titles.values.squeeze()
+        titles = list(map(lambda x: x.strip().lower(), titles))
+        NUM_OF_TITLES = len(titles)
+        choose_random_title = np.random.randint(0, NUM_OF_TITLES - 1)
+
 
     # assert model_name not in ['774M', '1558M'] or multi_gpu, "Currently, a modern single GPU cannot finetune the 774M GPT-2 model or larger."
 
@@ -535,7 +543,6 @@ def finetune_articles(sess,
 
     def generate_samples():
         if custom_start_context:
-            choose_random_title = np.random.randint(0, NUM_OF_TITLES - 1)
             my_custom_prefix = '<|startoftext|>' + titles[choose_random_title] + '<title>'
             context_tokens = enc.encode(my_custom_prefix)
         else:
