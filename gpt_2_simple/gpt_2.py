@@ -843,9 +843,9 @@ def is_mounted():
     assert os.path.isdir('/content/drive'), "You must mount first using mount_gdrive()"
 
 
-def get_tarfile_name(checkpoint_folder):
+def get_tarfile_name(checkpoint_folder, file_postfix=''):
     """Converts a folder path into a filename for a .tar archive"""
-    tarfile_name = checkpoint_folder.replace(os.path.sep, '_') + '.tar'
+    tarfile_name = checkpoint_folder.replace(os.path.sep, '_') + file_postfix + '.tar'
 
     return tarfile_name
 
@@ -859,13 +859,13 @@ def copy_checkpoint_to_gdrive(run_name='run1', copy_folder=False, file_postfix='
     if copy_folder:
         shutil.copytree(checkpoint_folder, "/content/drive/My Drive/" + checkpoint_folder)
     else:
-        file_path = get_tarfile_name(checkpoint_folder)
+        file_path = get_tarfile_name(checkpoint_folder, file_postfix)
 
         # Reference: https://stackoverflow.com/a/17081026
         with tarfile.open(file_path, 'w') as tar:
             tar.add(checkpoint_folder)
 
-        shutil.copyfile(file_path, "/content/drive/My Drive/" + file_path+file_postfix)
+        shutil.copyfile(file_path, "/content/drive/My Drive/" + file_path)
 
 
 def copy_checkpoint_from_gdrive(run_name='run1', copy_folder=False):
