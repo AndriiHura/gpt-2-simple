@@ -399,7 +399,8 @@ def finetune_articles(sess,
              custom_start_context=False,
              titles_file='',
              check_uniqueness=False,
-             uniqueness_api_key=''):
+             uniqueness_api_key='',
+             custom_temp=0.75):
     """Finetunes the model on the given dataset.
     Adapted from https://github.com/nshepperd/gpt-2/blob/finetuning/train.py.
     See that file for parameter definitions.
@@ -478,7 +479,7 @@ def finetune_articles(sess,
         length=sample_length,
         context=context,
         batch_size=batch_size,
-        temperature=1.0,
+        temperature=custom_temp,
         top_k=40)
 
     all_vars = [v for v in tf.compat.v1.trainable_variables() if 'model' in v.name]
