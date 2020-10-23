@@ -587,7 +587,10 @@ def finetune_articles(sess,
                     index + 1, text)
                 all_text.append(text)
                 index += 1
-        print("Average uniqueness percent for", sample_num, "articles is", sum(percents_list)/sample_num, '%')
+        print("Mean uniqueness percent for", sample_num, "articles is", sum(percents_list)/sample_num, '%')
+        print("List of uniqueness scores:")
+        print(percents_list)
+        
         print(text)
         maketree(os.path.join(SAMPLE_DIR, run_name))
         with open(
