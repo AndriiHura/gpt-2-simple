@@ -16,7 +16,7 @@ import csv
 import argparse
 #
 import pandas as pd
-
+import requests
 # if in Google Colaboratory
 try:
     from google.colab import drive
@@ -397,19 +397,34 @@ def finetune_articles(sess,
              optimizer='adam',
              overwrite=False,
              custom_start_context=False,
-             titles_file=''):
+             titles_file='',
+             check_uniqueness=False,
+             uniqueness_api_key=''):
     """Finetunes the model on the given dataset.
     Adapted from https://github.com/nshepperd/gpt-2/blob/finetuning/train.py.
     See that file for parameter definitions.
     """
+    
+    def compose_and_send_query(in_article, api_key=uniqueness_api_key):
+        """
+        Function sends a query to API, and returns response as a dict.
+
+        :param in_article: string with content of input article
+        :return:
+        """
+        query = {'key': api_key, 'action': 'CHECK_TEXT', 'text': in_article, 'ignore': ''}
+        response = requests.post('https://content-watch.ru/public/api/', data=query)
+        dict_response = response.json()
+        return dict_response
+    
+    
     if custom_start_context:
         path_to_tiles = "/content/" + titles_file
         df_titles = pd.read_csv(path_to_tiles, names=['Title'])
         titles = df_titles.values.squeeze()
         titles = list(map(lambda x: x.strip().lower(), titles))
         NUM_OF_TITLES = len(titles)
-        choose_random_title = np.random.randint(0, NUM_OF_TITLES - 1)
-
+        
 
     # assert model_name not in ['774M', '1558M'] or multi_gpu, "Currently, a modern single GPU cannot finetune the 774M GPT-2 model or larger."
 
@@ -541,9 +556,12 @@ def finetune_articles(sess,
             global_step=counter-1)
         with open(counter_path, 'w') as fp:
             fp.write(str(counter-1) + '\n')
+            
+    
 
     def generate_samples():
         if custom_start_context:
+            choose_random_title = np.random.randint(0, NUM_OF_TITLES - 1)
             my_custom_prefix = '<|startoftext|>' + titles[choose_random_title] + '<title>'
             context_tokens = enc.encode(my_custom_prefix)
         else:
@@ -551,16 +569,24 @@ def finetune_articles(sess,
         
         all_text = []
         index = 0
+        percents_list = []
         while index < sample_num:
             out = sess.run(
                 tf_sample,
                 feed_dict={context: batch_size * [context_tokens]})
             for i in range(min(sample_num - index, batch_size)):
                 text = enc.decode(out[i])
+                # Custom code
+                if(check_uniqueness):
+                    article_to_check = text.split("<|endoftext|>")[0].strip().replace("<|endoftext|>", "").replace("<title>", "")
+                    response_dict = compose_and_send_query(article_to_check, uniqueness_api_key)
+                    percents_list.append(float(response_dict['percent']))
+                # Custom code
                 text = '======== SAMPLE {} ========\n{}\n'.format(
                     index + 1, text)
                 all_text.append(text)
                 index += 1
+        print("Average uniqueness percent for", sample_num, "articles is", sum(percents_list)/sample_num, '%')
         print(text)
         maketree(os.path.join(SAMPLE_DIR, run_name))
         with open(
