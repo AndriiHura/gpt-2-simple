@@ -396,7 +396,8 @@ def finetune_articles(sess,
              only_train_transformer_layers=False,
              optimizer='adam',
              overwrite=False,
-             custom_start_context=False):
+             custom_start_context=False,
+             titles_file=''):
     """Finetunes the model on the given dataset.
     Adapted from https://github.com/nshepperd/gpt-2/blob/finetuning/train.py.
     See that file for parameter definitions.
