@@ -535,7 +535,8 @@ def finetune_articles(sess,
 
     def generate_samples():
         if custom_start_context:
-            my_custom_prefix = '<|startoftext|>New drug could make it easier to treat skin cancers<title>'
+            choose_random_title = np.random.randint(0, NUM_OF_TITLES - 1)
+            my_custom_prefix = '<|startoftext|>' + titles[choose_random_title] + '<title>'
             context_tokens = enc.encode(my_custom_prefix)
         else:
             context_tokens = data_sampler.sample(1)
