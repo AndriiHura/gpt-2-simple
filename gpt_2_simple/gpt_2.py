@@ -420,10 +420,12 @@ def finetune_articles(sess,
     
     
     if custom_start_context:
-        path_to_tiles = "/content/" + titles_file
-        df_titles = pd.read_csv(path_to_tiles, names=['Title'])
-        titles = df_titles.values.squeeze()
-        titles = list(map(lambda x: x.strip().lower(), titles))
+        titles = [
+ 'Factbox: Latest on the coronavirus spreading in China and beyond',
+ "Innate immune T cells play key role in controlling inflammation in Crohn's disease",
+ "I hope you're happy to know your doctor is a pharmacist",
+ 'Dementia spreads via neuronal mechanisms',
+ 'Study shows how neural circuits that control thirst control body weight']
         NUM_OF_TITLES = len(titles)
         
 
