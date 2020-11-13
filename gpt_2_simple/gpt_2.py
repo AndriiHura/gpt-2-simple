@@ -397,6 +397,7 @@ def finetune_articles(sess,
              optimizer='adam',
              overwrite=False,
              custom_start_context=False,
+             topic_num=1,
              titles_file='',
              check_uniqueness=False,
              uniqueness_api_key='',
@@ -420,13 +421,22 @@ def finetune_articles(sess,
     
     
     if custom_start_context:
-        titles = [
- 'Factbox: Latest on the coronavirus spreading in China and beyond',
- "Innate immune T cells play key role in controlling inflammation in Crohn's disease",
- "I hope you're happy to know your doctor is a pharmacist",
- 'Dementia spreads via neuronal mechanisms',
- 'Study shows how neural circuits that control thirst control body weight']
-        NUM_OF_TITLES = len(titles)
+        if topic_num == 1:
+            titles = [
+     'Factbox: Latest on the coronavirus spreading in China and beyond',
+     "Innate immune T cells play key role in controlling inflammation in Crohn's disease",
+     "I hope you're happy to know your doctor is a pharmacist",
+     'Dementia spreads via neuronal mechanisms',
+     'Study shows how neural circuits that control thirst control body weight']
+            NUM_OF_TITLES = len(titles)
+        else:
+            titles = [
+     '3 Premature Ejaculation Tips That Will Lead You Toward Self Acceptance',
+     "Do Penis Exercises Work? 2 Popular Male Enlargement Tips Exposed",
+     "Ways to Get a Large Penis - Get The Most Explosive Penis Enlargement!",
+     'A Guide to Penis Health Care',
+     'Treat Erectile Dysfunction Naturally']
+            NUM_OF_TITLES = len(titles)
         
 
     # assert model_name not in ['774M', '1558M'] or multi_gpu, "Currently, a modern single GPU cannot finetune the 774M GPT-2 model or larger."
